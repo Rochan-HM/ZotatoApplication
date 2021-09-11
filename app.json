@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "StarterProject",
-    "slug": "StarterProject",
+    "name": "food-orderer",
+    "slug": "food-orderer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
