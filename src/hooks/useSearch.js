@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from "react";
-import yelp_axios from "../api/yelp";
+import api_axios from "../api/api";
 
 export default () => {
     const [business, setBusiness] = useState([]);
     const [error, setError] = useState("");
 
-    const searchAPI = async (term) => {
+    const searchAPI = async (term, location) => {
         try {
-            const res = await yelp_axios.get("/search", {
+            const res = await api_axios.get("/search", {
                 params: {
                     term,
-                    limit: 50,
-                    price: [1, 2, 3, 4],
-                    location: "North Ave NW, Atlanta, GA 30332",
+                    location,
                 },
             });
-            setBusiness(res.data.businesses);
+            setBusiness(res.data);
             setError("");
         } catch (e) {
             console.log(e);
@@ -24,7 +22,7 @@ export default () => {
     };
 
     useEffect(() => {
-        searchAPI("Pasta");
+        searchAPI("", "Atlanta, GA");
     }, []);
 
     return [searchAPI, business, error];
