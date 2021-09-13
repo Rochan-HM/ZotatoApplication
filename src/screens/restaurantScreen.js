@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Image,
     StyleSheet,
@@ -20,7 +20,7 @@ import openMap from "react-native-open-maps";
 import api_axios from "../api/api";
 import LoadingIcon from "../components/loadingIcon";
 import StarRating from "../components/starRating";
-import { Context } from "../context/authContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RestaurantScreen = ({ navigation }) => {
     const id = navigation.getParam("id");
@@ -28,12 +28,11 @@ const RestaurantScreen = ({ navigation }) => {
     const [comments, setComments] = useState([]);
     const [error, setError] = useState("");
     const [newComment, setNewComment] = useState("");
+    const [token, setToken] = useState("");
 
-    const { state } = useContext(Context);
-    const isSignedIn = state.token;
-    // const isSignedIn = true;
-
-    const fetchData = async () => {
+    const init = async () => {
+        const t = await AsyncStorage.getItem("token");
+        setToken(t);
         try {
             const res = await api_axios.get(`/details/${id}`);
             const res2 = await api_axios.get(`/reviews/${id}`);
@@ -41,30 +40,46 @@ const RestaurantScreen = ({ navigation }) => {
             setComments(res2.data);
             setError("");
         } catch (e) {
-            setError(e.message);
+            console.log(e.response.data.error);
+            setError(e.response.data.error);
         }
     };
 
     const submitReview = async () => {
-        if (!isSignedIn) return;
+        if (!token) {
+            navigation.navigate("Auth");
+            return;
+        }
         try {
-            await api_axios.post("/reviews", {
-                businessID: id,
-                review: newComment,
-            });
+            const res = await api_axios.post(
+                "/reviews",
+                {
+                    businessID: id,
+                    review: newComment.trim(),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            console.log(res);
 
             setError("");
         } catch (e) {
-            setError(e.message);
+            console.log(e);
+            setError(e.response.data.error);
+            navigation.navigate("Home");
         }
     };
 
     useEffect(() => {
         LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
-        fetchData();
+        init();
     }, []);
 
-    if (error) return null;
+    if (error) return <Text style={{ fontSize: 18, color: red }}>{error}</Text>;
 
     if (!result) {
         return <LoadingIcon size="large" color="brown" />;
@@ -113,7 +128,7 @@ const RestaurantScreen = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flexDirection: "row", marginVertical: 10 }}>
-                        <Ionicons name="call" size={18} color="blue" />
+                        <Ionicons name="call" size={18} color="brown" />
                         <Text style={styles.subMetaText}>
                             {result.display_phone}
                         </Text>
@@ -131,7 +146,7 @@ const RestaurantScreen = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flexDirection: "row", marginVertical: 5 }}>
-                        <Entypo name="location" size={18} color="orange" />
+                        <Entypo name="location" size={18} color="brown" />
                         <Text style={styles.subMetaText}>
                             {result.location.display_address.join(" ")}
                         </Text>
@@ -165,7 +180,7 @@ const RestaurantScreen = ({ navigation }) => {
                     marginVertical: 5,
                 }}
             >
-                <Ionicons name="leaf-sharp" size={24} color="gold" />
+                <Ionicons name="leaf-sharp" size={24} color="brown" />
                 <Text
                     style={{ marginLeft: 5, fontSize: 22, fontWeight: "bold" }}
                 >
@@ -182,7 +197,7 @@ const RestaurantScreen = ({ navigation }) => {
                         style={{
                             marginLeft: 36,
                             fontSize: 18,
-                            color: "blue",
+                            color: "black",
                         }}
                     >
                         {item.title}
@@ -198,7 +213,7 @@ const RestaurantScreen = ({ navigation }) => {
                     marginVertical: 20,
                 }}
             >
-                <MaterialIcons name="rate-review" size={24} color="gold" />
+                <MaterialIcons name="rate-review" size={24} color="brown" />
                 <Text
                     style={{ marginLeft: 5, fontSize: 22, fontWeight: "bold" }}
                 >
@@ -213,7 +228,7 @@ const RestaurantScreen = ({ navigation }) => {
                         <FontAwesome
                             name="quote-left"
                             size={22}
-                            color="gold"
+                            color="brown"
                             style={{ marginLeft: 10 }}
                         />
                         <Text
@@ -250,7 +265,7 @@ const RestaurantScreen = ({ navigation }) => {
                     marginVertical: 20,
                 }}
             >
-                <FontAwesome name="pencil-square" size={24} color="gold" />
+                <FontAwesome name="pencil-square" size={24} color="brown" />
                 <Text
                     style={{ marginLeft: 5, fontSize: 22, fontWeight: "bold" }}
                 >
@@ -266,7 +281,6 @@ const RestaurantScreen = ({ navigation }) => {
                     placeholderTextColor="gray"
                     numberOfLines={10}
                     multiline
-                    disabled={!isSignedIn}
                     onChangeText={setNewComment}
                 />
             </View>
@@ -274,12 +288,11 @@ const RestaurantScreen = ({ navigation }) => {
                 style={{
                     marginVertical: 20,
                     justifyContent: "center",
-                    backgroundColor: isSignedIn ? "brown" : "grey",
+                    backgroundColor: token ? "brown" : "grey",
                     marginHorizontal: 20,
                     height: 50,
                 }}
-                disabled={!isSignedIn}
-                onPress={submitReview}
+                onPress={() => submitReview()}
             >
                 <Text
                     style={{
@@ -289,7 +302,7 @@ const RestaurantScreen = ({ navigation }) => {
                         textTransform: "uppercase",
                     }}
                 >
-                    {isSignedIn ? "Submit" : "Log In To Submit a Review"}
+                    {token ? "Submit" : "Log In To Submit a Review"}
                 </Text>
             </TouchableOpacity>
         </ScrollView>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
     View,
     Text,
@@ -12,24 +12,31 @@ import { withNavigation } from "react-navigation";
 import SearchBar from "../components/searchBar";
 import BusinessList from "../components/businessList";
 import useSearch from "../hooks/useSearch";
-import { Context } from "../context/authContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = ({ navigation }) => {
     const [location, setLocation] = useState("Atlanta, GA");
     const [searchText, setSearchText] = useState("");
     const [searchAPI, business, error] = useSearch();
+    const [token, setToken] = useState("");
 
     const filterByPrice = (price) => business.filter((x) => x.price === price);
 
-    const { state } = useContext(Context);
-    const isSignedIn = state.token;
+    const init = async () => {
+        const t = await AsyncStorage.getItem("token");
+        setToken(t);
+    };
+
+    useEffect(() => {
+        init();
+    }, []);
 
     return (
         <>
             <Button
                 onPress={() => navigation.navigate("Auth")}
-                title={isSignedIn ? "Sign Out" : "Sign In"}
-                color={isSignedIn ? "red" : "green"}
+                title="Account"
+                color="green"
             />
 
             <SearchBar
