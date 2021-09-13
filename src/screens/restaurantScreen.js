@@ -113,7 +113,7 @@ const RestaurantScreen = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flexDirection: "row", marginVertical: 10 }}>
-                        <Ionicons name="call" size={18} color="black" />
+                        <Ionicons name="call" size={18} color="blue" />
                         <Text style={styles.subMetaText}>
                             {result.display_phone}
                         </Text>
@@ -131,7 +131,7 @@ const RestaurantScreen = ({ navigation }) => {
                     }}
                 >
                     <View style={{ flexDirection: "row", marginVertical: 5 }}>
-                        <Entypo name="location" size={18} color="black" />
+                        <Entypo name="location" size={18} color="orange" />
                         <Text style={styles.subMetaText}>
                             {result.location.display_address.join(" ")}
                         </Text>
@@ -165,7 +165,7 @@ const RestaurantScreen = ({ navigation }) => {
                     marginVertical: 5,
                 }}
             >
-                <Ionicons name="leaf-sharp" size={24} color="black" />
+                <Ionicons name="leaf-sharp" size={24} color="gold" />
                 <Text
                     style={{ marginLeft: 5, fontSize: 22, fontWeight: "bold" }}
                 >
@@ -182,6 +182,7 @@ const RestaurantScreen = ({ navigation }) => {
                         style={{
                             marginLeft: 36,
                             fontSize: 18,
+                            color: "blue",
                         }}
                     >
                         {item.title}
@@ -197,7 +198,7 @@ const RestaurantScreen = ({ navigation }) => {
                     marginVertical: 20,
                 }}
             >
-                <MaterialIcons name="rate-review" size={24} color="black" />
+                <MaterialIcons name="rate-review" size={24} color="gold" />
                 <Text
                     style={{ marginLeft: 5, fontSize: 22, fontWeight: "bold" }}
                 >
@@ -212,7 +213,7 @@ const RestaurantScreen = ({ navigation }) => {
                         <FontAwesome
                             name="quote-left"
                             size={22}
-                            color="black"
+                            color="gold"
                             style={{ marginLeft: 10 }}
                         />
                         <Text
@@ -249,7 +250,7 @@ const RestaurantScreen = ({ navigation }) => {
                     marginVertical: 20,
                 }}
             >
-                <FontAwesome name="pencil-square" size={24} color="black" />
+                <FontAwesome name="pencil-square" size={24} color="gold" />
                 <Text
                     style={{ marginLeft: 5, fontSize: 22, fontWeight: "bold" }}
                 >

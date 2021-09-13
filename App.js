@@ -16,6 +16,7 @@ const nav = createStackNavigator(
         initialRouteName: "Home",
         defaultNavigationOptions: {
             title: "Zotato",
+            headerStyle: {backgroundColor: 'red'},
         },
     }
 );

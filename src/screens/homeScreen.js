@@ -29,7 +29,7 @@ const HomeScreen = ({ navigation }) => {
             <Button
                 onPress={() => navigation.navigate("Auth")}
                 title={isSignedIn ? "Sign Out" : "Sign In"}
-                color="brown"
+                color={isSignedIn ? "red" : "green"}
             />
 
             <SearchBar

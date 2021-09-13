@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     starStyle: {
-        color: "brown",
+        color: "gold",
         alignSelf: "flex-start",
     },
 });
